@@ -1,10 +1,12 @@
 #Try to rebuild an Enigma Maschine
 
 class Keyboard:    #键盘部分（输入）
-    pass
+    def __init__(self):
+        pass
 
 class Plugboard:    #接线板部分（两两交换字母）
-    pass
+    print('【请设置接线板】')
+    print('=========================================\n')
 
 class Rotors:    #转子部分（进一步替换）
     
@@ -19,7 +21,7 @@ class Rotors:    #转子部分（进一步替换）
             shuffle(Rotors.alphabet_list)    #随机洗牌
             Rotors.rotors.append("".join(Rotors.alphabet_list))    #8个转子保存在列表里
 
-        print('Rotors Initialized.\n'    #打印出所有转子的配置
+        print('【转子初始化完毕】\n'    #打印出所有转子的配置
               '=========================================\n'
               '   '+Rotors.alphabet+'\n'
               '=========================================\n'
@@ -34,13 +36,14 @@ class Rotors:    #转子部分（进一步替换）
               '==========================================\n')
         
         print('请选择转子（1-8）')
+        invalid_entry='输入的值无效，请重新输入'
         while True:
             slot1=int(input('选择第一个转子：'))
             if 1 <= slot1 <= 8:
                 print('R'+str(slot1)+':',Rotors.rotors[slot1-1])
                 break
             else:
-                print('输入的值无效，请重新输入')
+                print(invalid_entry)
 
         while True:
             slot2=int(input('选择第二个转子：'))
@@ -48,7 +51,7 @@ class Rotors:    #转子部分（进一步替换）
                 print('R'+str(slot2)+':',Rotors.rotors[slot2-1])
                 break
             else:
-                print('输入的值无效，请重新输入')
+                print(invalid_entry)
             
         while True:
             slot3=int(input('选择第三个转子：'))
@@ -56,7 +59,7 @@ class Rotors:    #转子部分（进一步替换）
                 print('R'+str(slot3)+':',Rotors.rotors[slot3-1])
                 break
             else:
-                print('输入的值无效，请重新输入')
+                print(invalid_entry)
         
     def rotate(self):    #转动功能
         pass    #暂时不知道怎么写
@@ -85,10 +88,10 @@ class Reflector:    #反射器部分（返回信号）
 
 class Enigma:    #主体部分（框架）
     
+    Plugboard()
     slot1=slot2=slot3=None
     Rotors()
 #    Keyboard()
-#    Plugboard()
 
     def __init__(self):    #初始化
         pass
