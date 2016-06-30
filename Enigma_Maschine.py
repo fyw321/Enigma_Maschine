@@ -2,11 +2,16 @@
 
 class Keyboard:    #键盘部分（输入）
     def __init__(self):
-        pass
+        print('请输入要加密的内容（英文），请勿换行，或加入标点符号')
+        plain_text=input('请输入')
+        #加入函数来处理内容，去掉空格之类，用正则表达式去掉英文字母以外的
+
 
 class Plugboard:    #接线板部分（两两交换字母）
-    print('【请设置接线板】')
-    print('=========================================\n')
+    def __init__(self):
+        print('【请设置接线板】')
+        print('=========================================\n')
+        #正则表达式来第一次替换明文
 
 class Rotors:    #转子部分（进一步替换）
     
@@ -16,6 +21,7 @@ class Rotors:    #转子部分（进一步替换）
     
     def __init__(self):    #初始化
         from random import seed,shuffle
+        import re
         for i in range(0,8):    #生成8个转子
             seed(i)    #加入伪随机数种子，使得每次生成的每个转子的替换是固定的
             shuffle(Rotors.alphabet_list)    #随机洗牌
@@ -37,36 +43,47 @@ class Rotors:    #转子部分（进一步替换）
         
         print('请选择转子（1-8）')
         invalid_entry='输入的值无效，请重新输入'
+        #加入用正则表达式确保输入的是数字
+        #这里输入空值会报错
         while True:
-            slot1=int(input('选择第一个转子：'))
-            if 1 <= slot1 <= 8:
-                print('R'+str(slot1)+':',Rotors.rotors[slot1-1])
+            i1=int(input('选择放入第一个插槽的转子：'))
+            if 1 <= i1 <= 8:
+                slot1=Rotors.rotors[i1-1]
+                print('R'+str(i1)+':',slot1)
                 break
             else:
                 print(invalid_entry)
 
         while True:
-            slot2=int(input('选择第二个转子：'))
-            if 0 <= slot2 <= 8 and slot2 != slot1:
-                print('R'+str(slot2)+':',Rotors.rotors[slot2-1])
+            i2=int(input('选择放入第二个插槽的转子：'))
+            if 1 <= i2 <= 8 and i2 != i1:
+                slot2=Rotors.rotors[i2-1]
+                print('R'+str(i2)+':',slot2)
                 break
             else:
                 print(invalid_entry)
             
         while True:
-            slot3=int(input('选择第三个转子：'))
-            if 0 <= slot3 <= 8 and slot3 != slot2 != slot1:
-                print('R'+str(slot3)+':',Rotors.rotors[slot3-1])
+            i3=int(input('选择放入第三个插槽的转子：'))
+            if 1 <= i3 <= 8 and i3 != i1 and i3 != i2:
+                slot3=Rotors.rotors[i3-1]
+                print('R'+str(i3)+':',slot3)
                 break
             else:
                 print(invalid_entry)
-        
-    def rotate(self):    #转动功能
-        pass    #暂时不知道怎么写
+        '''
+#    def rotate(self):    #转动功能
         print('Rotate rotors.')
-        print(self.test)
+        for i in range(0,8):
+            print(i)
+            list(slot1)[i]=list(slot1)[i-1]    #转子转动平移往前一位
+            #不对
+        print(''.join(slot1))
+        '''
+        
 
     def scramble(self):    #字母替换功能，要加参数
+        #用for来遍历明文plain_text，一次加密一个
         print('Input: '+Rotors.alphabet[4])  #输入E
         exchange_1=Rotors.rotors[0].index(Rotors.alphabet[4])    #第一次替换，搜索E在转子#1中的位置
         print('Index in Rotor#1:',exchange_1)
@@ -88,8 +105,7 @@ class Reflector:    #反射器部分（返回信号）
 
 class Enigma:    #主体部分（框架）
     
-    Plugboard()
-    slot1=slot2=slot3=None
+#    Plugboard()
     Rotors()
 #    Keyboard()
 
