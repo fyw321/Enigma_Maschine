@@ -4,8 +4,8 @@
 def keyboard():    #键盘部分（输入）
     import re
     
-    input_text=input('请输入要加密的内容（英文）')
-    no_space=re.sub(r'\s',r'_',input_text.strip())    #去掉文字两边的空格，把文中空格替换为下划线
+    raw_text=input('请输入要加密的内容（英文）')
+    no_space=re.sub(r'\s',r'_',raw_text.strip())    #去掉文字两边的空格，把文中空格替换为下划线
     pattern=re.compile(r'[a-zA-Z0-9_.,?]')    #匹配数字、大小写字母、逗号句号、空格、问号
     formatted_text=(''.join(re.findall(pattern, no_space))).upper()    #把匹配结果联合成一个字符串，并把字母全大写
     print('=========================================\n')
@@ -13,11 +13,32 @@ def keyboard():    #键盘部分（输入）
 
 #==========Plugboard==========
 def plugboard(input_text):    #接线板部分（两两交换字母）
-    print('【请设置接线板】')
-    ##加入一个输入功能来设置字符交换
+    from random import seed,sample
+    import re
+
+    seed(input('请输入设置接线板的随机数种子：'))
+    invalid_value='输入的值无效，请重新输入0-20的数字'
+    while True:
+        plugs=int(input('请选择要交换多少对字符：'))    #设置需要交换多少对字符
+        if 0 <= plugs <= len(alphabet)//2:    #字母表长40
+            break
+        else:
+            print(invalid_value)
+    plugboard_setting=sample(alphabet, plugs*2)    #从字母表随机选出2倍plugs长度的字符，用一部分替换另一部分
     print('=========================================\n')
-    diverted_text='test'    #输出一个替换过的内容
-    ##正则表达式来交换字母，输入交换一次，输出交换一次
+    print(plugboard_setting)
+    front=[]
+    back=[]
+    for i in range(plugs):
+        front.append(plugboard_setting[i])
+        back.append(plugboard_setting[i+plugs])
+    print('=========================================\n')
+    print(front)    #相互交换的字符序列front
+    print(back)    #相互交换的字符序列back
+
+    
+    diverted_text= 'text'
+    ##正则表达式来交换字母，将front和back中的元素互相替换
     return diverted_text
 
 #==========Rotors==========
@@ -25,12 +46,10 @@ def rotors():    #转子部分（进一步替换）
     from random import seed,shuffle
     import re
     
-    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
     alphabet_list=list(alphabet)    #列表化
     rt=[]
-
+    seed(input('请输入生成转子的随机数种子：'))    #加入伪随机数种子，使得每次生成的每个转子的替换是固定的
     for i in range(0,8):    #生成8个转子
-        seed(i)    #加入伪随机数种子，使得每次生成的每个转子的替换是固定的
         shuffle(alphabet_list)    #随机洗牌
         rt.append("".join(alphabet_list))    #8个转子保存在列表里
 
@@ -54,7 +73,7 @@ def rotors():    #转子部分（进一步替换）
     ##这里输入空值会报错！
     while True:
         i1=int(input('选择放入第一个插槽的转子：'))
-        if 1 <= i1 <= 8 and str(i1).isdigit():
+        if 1 <= i1 <= 8:
             slot1=rt[i1-1]
             print('R'+str(i1)+':',slot1)
             break
@@ -113,10 +132,15 @@ def reflector():    #反射器部分（返回信号）
 
 #==========Lampboard==========
 def lampboard():    #灯板部分（输出）
-    output_txt = 'output text here'
+    output_text = 'output text here'
     return output_text
 
 #==========Enigma==========
+alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
+
 set_rotors = rotors()    #设置转子，调用rotors()方法，返回一个列表
 input_text = keyboard()    #输入内容
-set_plugboard = plugboard(input_text)    #设置接线板，调用plugboard()方法，返回一个？
+diverted_text = plugboard(input_text)    #设置接线板，调用plugboard()方法，返回一个经过初
+output_text=lampboard()
+print('输出的内容为：\n')
+#print(output_text)
