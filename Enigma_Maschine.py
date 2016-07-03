@@ -4,7 +4,7 @@
 def keyboard():    #键盘部分（输入）
     import re
     
-    raw_text=input('请输入要加密的内容（英文）')
+    raw_text=input('请输入要处理的内容（英文）\n')
     no_space=re.sub(r'\s',r'_',raw_text.strip())    #去掉文字两边的空格，把文中空格替换为下划线
     pattern=re.compile(r'[a-zA-Z0-9_.,?]')    #匹配数字、大小写字母、逗号句号、空格、问号
     formatted_text=(''.join(re.findall(pattern, no_space))).upper()    #把匹配结果联合成一个字符串，并把字母全大写
@@ -16,6 +16,7 @@ def plugboard(input_text):    #接线板部分（两两交换字母）
     from random import seed,sample
     import re
 
+    ##这里加入一个if判断，是输入时（第一次）还是输出时（第二次）的替换，以免重复设置
     seed(input('请输入设置接线板的随机数种子：'))
     invalid_value='输入的值无效，请重新输入0-20的数字'
     while True:
@@ -26,19 +27,51 @@ def plugboard(input_text):    #接线板部分（两两交换字母）
             print(invalid_value)
     plugboard_setting=sample(alphabet, plugs*2)    #从字母表随机选出2倍plugs长度的字符，用一部分替换另一部分
     print('=========================================\n')
-    print(plugboard_setting)
+    print(plugboard_setting)    #生成一个接线板的配置列表，前半部分作为front，后半部分作为back
+
     front=[]
     back=[]
     for i in range(plugs):
         front.append(plugboard_setting[i])
         back.append(plugboard_setting[i+plugs])
+    temp=[]    #建立一个过度用的临时字符序列temp，实现front-->temp-->back, back-->front   
+    for i in front:
+        temp.append(i+'&')
     print('=========================================\n')
     print(front)    #相互交换的字符序列front
     print(back)    #相互交换的字符序列back
+    print(temp)    #过渡序列temp
 
+    copy=diverted=list(input_text)    #复制所输入的文本方便修改
+    print('1',copy)
+
+    for char in copy:    #遍历输入的文本中的每一个字符
+        i=copy.index(char)
+        if char in front:    #检查是否有front中的字符
+            bingo_index=front.index(char)    #找到匹配项在front中的位置
+            bingo=temp[bingo_index]    #找到匹配项在temp中对应的位置
+            diverted[i]=bingo    #将文本中的匹配front的字符替换为temp中的临时字符
+
+        elif char in back:    #检查是否有back中的字符
+            bingo_index=back.index(char)    #找到匹配项在back中的位置
+            bingo=front[bingo_index]    #找到匹配项在front中对应的位置
+            diverted[i]=bingo    #将文本中的匹配back的字符替换为front中的字符
+
+    print('2',copy)
+
+    for char in diverted:
+        i=diverted.index(char)
+        if char in temp:    #检查是否有temp中的字符
+            bingo_index=temp.index(char)    #找到匹配项在temp中的位置
+            bingo=back[bingo_index]    #找到匹配项在back中对应的位置
+            diverted[i]=bingo    #将文本中的匹配temp的字符替换为back中的字符，去掉所有临时字符
+
+    ##有bug，转换的时候会重复转换字符，灵异
+
+    diverted_text=''.join(diverted)    #输出转换后的文本
+    print(diverted)
+    print('3',diverted_text)
     
-    diverted_text= 'text'
-    ##正则表达式来交换字母，将front和back中的元素互相替换
     return diverted_text
 
 #==========Rotors==========
