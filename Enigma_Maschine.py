@@ -131,12 +131,16 @@ def rotors():    #转子部分（进一步替换）
     return slot1,slot2,slot3
           
 def scramble(diverted_text,rotors_setting):    #转子加密功能，参数是输入内容和转子设定
-    
+
     for char in diverted_text:    #用for来遍历diverted_text，一次加密一个
         exchange_1=rotors_setting[0][alphabet.index(char)]    #使用第1个转子加密，搜索E在转子#1中的位置
-        print(exchange_1)
+        ##此处slot1应转动
+        
+        exchange_2=rotors_setting[1][rotors_setting[0].index(exchange_1)]
 
-    scrambled_text='scrambled'
+        exchange_3=rotors_setting[2][rotors_setting[1].index(exchange_2)]
+        
+    scrambled_text=exchange_3
     return scrambled_text
 
 ##每加密一个字符便转动slot1中的转子一格，slot1转一圈slot2中的转一格，slot3以此类推
@@ -166,7 +170,7 @@ rotors_setting = rotors()    #设置转子，调用rotors()方法，返回一个
 input_text = keyboard()    #输入内容
 diverted_text = plugboard(input_text)    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
 scrambled_text = scramble(diverted_text,rotors_setting)    #调用scramble()方法，使字符进入转子进一步加密
-
+print(scrambled_text)
 output_text=lampboard()
 print('输出的内容为：\n')
 #print(output_text)
