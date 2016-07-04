@@ -131,28 +131,36 @@ def rotors():    #转子部分（进一步替换）
     return slot1,slot2,slot3
           
 def scramble(diverted_text,rotors_setting):    #转子加密功能，参数是输入内容和转子设定
-
+    scrambled=[]
+    ein=zwei=drei=0    #三个转子的偏移量
+    print('r1',rotors_setting[0])
+    print('r2',rotors_setting[1])
+    print('r3',rotors_setting[2])
     for char in diverted_text:    #用for来遍历diverted_text，一次加密一个
-        exchange_1=rotors_setting[0][alphabet.index(char)]    #使用第1个转子加密，搜索E在转子#1中的位置
-        ##此处slot1应转动
+        exchange_1=rotors_setting[0][alphabet.index(char) - ein]    #使用第1个转子加密，搜索字符在转子1中的位置，并每加密一个字符向前平移一位
+        ein+=1    #转子1偏移量+1
+        if ein == len(rotors_setting[0]):    #当转子1转到一圈时
+            ein=0    #转子1偏移量归零
+            zwei+=1    #转子2偏移量+1
+            
+        exchange_2=rotors_setting[1][rotors_setting[0].index(exchange_1) - zwei]    #使用第2个转子加密
+        if zwei == len(rotors_setting[1]):    #当转子2转到一圈时
+            zwei=0    #转子2偏移量归零
+            drei+=1    #转子3偏移量+1
+            
+        exchange_3=rotors_setting[2][rotors_setting[1].index(exchange_2) - drei]    #使用第3个转子加密
+        if drei == len(rotors_setting[2]):    #当转子2转到一圈时
+            drei=0
+        print('char:',char)
+        print(exchange_1)
+        print(exchange_2)
+        print(exchange_3)
+        #机智的我
+        scrambled.append(exchange_3)
         
-        exchange_2=rotors_setting[1][rotors_setting[0].index(exchange_1)]
-
-        exchange_3=rotors_setting[2][rotors_setting[1].index(exchange_2)]
-        
-    scrambled_text=exchange_3
+    print(scrambled)
+    scrambled_text=''.join(scrambled)
     return scrambled_text
-
-##每加密一个字符便转动slot1中的转子一格，slot1转一圈slot2中的转一格，slot3以此类推
-'''
-    print('Rotate rotors.')
-    for i in range(0,8):
-        print(i)
-        list(slot1)[i]=list(slot1)[i-1]    #转子转动平移往前一位
-        ##不对！
-        print(''.join(slot1))
-'''
-
 
 #==========Reflector==========
 def reflector():    #反射器部分（返回信号）
