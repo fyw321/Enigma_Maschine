@@ -13,11 +13,9 @@ def keyboard():    #键盘部分（输入）
     return formatted_text
 
 #==========Plugboard==========
-def plugboard(input_text):    #接线板部分（两两交换字母）
+def plugboard():    #接线板部分（两两交换字母）
     from random import seed,sample
-    import re
 
-    ##这里加入一个if判断，是输入时（第一次）还是输出时（第二次）的替换，以免重复设置
     print('='*(len(alphabet)+3))
     seed(input('请输入设置接线板的随机数种子：'))
     invalid_value='输入的值无效，请重新输入0-20的数字'
@@ -27,21 +25,29 @@ def plugboard(input_text):    #接线板部分（两两交换字母）
             break
         else:
             print(invalid_value)
-    plugboard_setting=sample(alphabet, plugs*2)    #从字母表随机选出2倍plugs长度的字符，用一部分替换另一部分
-    
-    print('接线板设置：\n ',plugboard_setting)    #生成一个接线板的配置列表，前半部分作为front，后半部分作为back
+    plugboard_sample=sample(alphabet, plugs*2)    #从字母表随机选出2倍plugs长度的字符，生成一个接线板的配置列表，前半部分作为front，后半部分作为back
 
-    front=[]
-    back=[]
-    for i in range(plugs):
-        front.append(plugboard_setting[i])
-        back.append(plugboard_setting[i+plugs])
+    front=plugboard_sample[0:plugs]    #front列表
     temp=[]    #建立一个过度用的临时字符序列temp，实现front-->temp-->back, back-->front   
     for i in front:
         temp.append(i+'&')
+    back=plugboard_sample[plugs:2*plugs]    #back列表
+    plugboard_setting=[front,temp,back]
+    
+    print('接线板设置：\n'+
+          str(plugboard_setting[0])+'\n'+
+          str(plugboard_setting[2]))
     print('='*(len(alphabet)+3)+'\n')
 
-    diverted=list(input_text)    #复制所输入的文本方便修改
+    
+    return plugboard_setting
+
+def divert(input_text,plugboard_setting):
+
+    diverted=list(input_text)    #列表化所输入的文本方便修改
+    front=plugboard_setting[0]
+    temp=plugboard_setting[1]
+    back=plugboard_setting[2]
 
     for char in diverted:    #遍历输入的文本中的每一个字符
         i=diverted.index(char)
@@ -71,10 +77,10 @@ def plugboard(input_text):    #接线板部分（两两交换字母）
 #==========Rotors==========
 def rotors():    #转子部分（进一步替换）
     from random import seed,shuffle
-    import re
     
     alphabet_list=list(alphabet)    #列表化
     rt=[]
+    print('='*(len(alphabet)+3))
     seed(input('请输入生成转子的随机数种子：'))    #加入伪随机数种子，使得每次生成的每个转子的替换是固定的
     for i in range(0,8):    #生成8个转子
         shuffle(alphabet_list)    #随机洗牌
@@ -99,12 +105,11 @@ def rotors():    #转子部分（进一步替换）
     print('请选择转子（1-8）')
     invalid_entry='输入的值无效，请重新输入1-8的数字'
     ##加入用正则表达式确保输入的是数字
-    ##这里输入空值会报错！
+    ##这里输入空值会报错，因为int()不能转化空值或非数字的值
     while True:
         i1=int(input('选择放入第一个插槽的转子：'))
         if 1 <= i1 <= 8:
             slot1=rt[i1-1]
-            print('R'+str(i1)+':'+str(slot1))
             break
         else:
             print(invalid_entry)
@@ -113,7 +118,6 @@ def rotors():    #转子部分（进一步替换）
         i2=int(input('选择放入第二个插槽的转子：'))
         if 1 <= i2 <= 8 and i2 != i1:
             slot2=rt[i2-1]
-            print('R'+str(i2)+':'+str(slot2))
             break
         else:
             print(invalid_entry)
@@ -122,50 +126,74 @@ def rotors():    #转子部分（进一步替换）
         i3=int(input('选择放入第三个插槽的转子：'))
         if 1 <= i3 <= 8 and i3 != i1 and i3 != i2:
             slot3=rt[i3-1]
-            print('R'+str(i3)+':'+str(slot3))
             break
         else:
             print(invalid_entry)
-    
+    print('\n'+'转子设置：')
+    print('R'+str(i1)+':'+str(slot1)+'\n'+
+          'R'+str(i2)+':'+str(slot2)+'\n'+
+          'R'+str(i3)+':'+str(slot3))
     print('='*(len(alphabet)+3)+'\n')
     return slot1,slot2,slot3
           
 def scramble(diverted_text,rotors_setting):    #转子加密功能，参数是输入内容和转子设定
+
     scrambled=[]
     ein=zwei=drei=0    #三个转子的偏移量
-    print('r1',rotors_setting[0])
-    print('r2',rotors_setting[1])
-    print('r3',rotors_setting[2])
+
     for char in diverted_text:    #用for来遍历diverted_text，一次加密一个
         exchange_1=rotors_setting[0][alphabet.index(char) - ein]    #使用第1个转子加密，搜索字符在转子1中的位置，并每加密一个字符向前平移一位
+                    
+        exchange_2=rotors_setting[1][rotors_setting[0].index(exchange_1) - zwei]    #使用第2个转子加密
+        
+        exchange_3=rotors_setting[2][rotors_setting[1].index(exchange_2) - drei]    #使用第3个转子加密
+        
         ein+=1    #转子1偏移量+1
         if ein == len(rotors_setting[0]):    #当转子1转到一圈时
             ein=0    #转子1偏移量归零
             zwei+=1    #转子2偏移量+1
-            
-        exchange_2=rotors_setting[1][rotors_setting[0].index(exchange_1) - zwei]    #使用第2个转子加密
         if zwei == len(rotors_setting[1]):    #当转子2转到一圈时
             zwei=0    #转子2偏移量归零
             drei+=1    #转子3偏移量+1
-            
-        exchange_3=rotors_setting[2][rotors_setting[1].index(exchange_2) - drei]    #使用第3个转子加密
         if drei == len(rotors_setting[2]):    #当转子2转到一圈时
             drei=0
-        print('char:',char)
-        print(exchange_1)
-        print(exchange_2)
-        print(exchange_3)
-        #机智的我
+
+        print(ein,zwei,drei,exchange_3)
         scrambled.append(exchange_3)
-        
-    print(scrambled)
+                
     scrambled_text=''.join(scrambled)
+    
     return scrambled_text
 
 #==========Reflector==========
-def reflector():    #反射器部分（返回信号）
-    pass
+def reflector():
+    from random import seed,shuffle
 
+    print('='*(len(alphabet)+3))
+    seed(input('请输入生成反射器的随机数种子：'))
+    reflector_setting=[]
+    alphabet_list=list(alphabet)
+    for i in range(2):
+        shuffle(alphabet_list)    #把字母表洗牌
+        reflector_setting.append("".join(alphabet_list))    #生成两组随机的字母表front和back，一一对应成为反射器
+
+    print('反射器设置：\n'+
+          reflector_setting[0]+'\n'+
+          reflector_setting[1])
+    print('='*(len(alphabet)+3)+'\n')
+    return reflector_setting
+
+def reflect(scrambled_text,reflector_setting):
+    front = reflector_setting[0]
+    back = reflector_setting[1]
+    reflected = []
+    for char in scrambled_text:
+        reflected.append(back[front.index(char)])
+        print('from',char,'to',back[front.index(char)])
+
+    reflected_text = ''.join(reflected)
+    print(reflected_text)
+            
 #==========Lampboard==========
 def lampboard():    #灯板部分（输出）
     output_text = 'output text here'
@@ -174,11 +202,17 @@ def lampboard():    #灯板部分（输出）
 #==========Enigma==========
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
 
+plugboard_setting = plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
 rotors_setting = rotors()    #设置转子，调用rotors()方法，返回一个列表
+reflector_setting = reflector()    #设置反射器，调用reflector()方法，返回一个列表
+
 input_text = keyboard()    #输入内容
-diverted_text = plugboard(input_text)    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
-scrambled_text = scramble(diverted_text,rotors_setting)    #调用scramble()方法，使字符进入转子进一步加密
-print(scrambled_text)
-output_text=lampboard()
+
+diverted_text = divert(input_text, plugboard_setting)    #调用diverte()方法，使字符进入接线板进行第一次交换
+scrambled_text = scramble(diverted_text, rotors_setting)    #调用scramble()方法，使字符进入转子进一步加密
+reflect = reflect(scrambled_text, reflector_setting)    #调用reflect()功能，使字符进入反射器交换，并返回转子
+
+#print(scrambled_text)
+output_text = lampboard()
 print('输出的内容为：\n')
 #print(output_text)
