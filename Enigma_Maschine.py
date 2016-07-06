@@ -180,18 +180,20 @@ def reflector():
       
     print('反射器设置：\n'+
           ' '*3+a+'\n'+
-          ' '*3+b+'\n'+
-          ' '*3+back)
+          ' '*3+b+'\n')
     print('='*(len(alphabet)+3)+'\n')
     
     return a,b
 
 def reflect(scrambled_text,reflector_setting):
+    a=reflector_setting[0]
+    b=reflector_setting[1]
     reflected = []
+    
     for char in scrambled_text:    #遍历scrambled_text中每一个字符
-        index=reflector_setting.index(char)    #在反射器序列中找到这个字符的位置
-        reflected.append(alphabet[index])    #并替换为字母表中相同位置的字符
-        print('from',char,'to',alphabet[index])
+        index=a.index(char)    #在反射器序列中找到这个字符的位置
+        reflected.append(b[index])    #并替换为字母表中相同位置的字符
+        print('from',char,'to',b[index])
 
     reflected_text = ''.join(reflected)
     print(reflected_text)
@@ -204,17 +206,17 @@ def lampboard():    #灯板部分（输出）
 #==========Enigma==========
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
 
-#plugboard_setting = plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
-#rotors_setting = rotors()    #设置转子，调用rotors()方法，返回一个列表
+plugboard_setting = plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
+rotors_setting = rotors()    #设置转子，调用rotors()方法，返回一个列表
 reflector_setting = reflector()    #设置反射器，调用reflector()方法，返回一个列表
 
-#input_text = keyboard()    #输入内容
+input_text = keyboard()    #输入内容
 
-#diverted_text = divert(input_text, plugboard_setting)    #调用diverte()方法，使字符进入接线板进行第一次交换
-#scrambled_text = scramble(diverted_text, rotors_setting)    #调用scramble()方法，使字符进入转子进一步加密
-#reflect = reflect(scrambled_text, reflector_setting)    #调用reflect()功能，使字符进入反射器交换，并返回转子
+diverted_text = divert(input_text, plugboard_setting)    #调用diverte()方法，使字符进入接线板进行第一次交换
+scrambled_text = scramble(diverted_text, rotors_setting)    #调用scramble()方法，使字符进入转子进一步加密
+reflect = reflect(scrambled_text, reflector_setting)    #调用reflect()功能，使字符进入反射器交换，并返回转子
 
-#print(scrambled_text)
-#output_text = lampboard()
+print(scrambled_text)
+output_text = lampboard()
 print('输出的内容为：\n')
-#print(output_text)
+print(output_text)
