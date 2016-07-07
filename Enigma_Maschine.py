@@ -19,13 +19,18 @@ def set_plugboard():    #设置接线板
     print('='*(len(alphabet)+3))
     seed(input('请输入设置接线板的随机数种子：'))
     invalid_value='输入的值无效，请重新输入0-20的数字'
-    ##数字
+
     while True:
-        plugs=int(input('请选择要交换多少对字符：'))    #设置需要交换多少对字符
-        if 0 <= plugs <= len(alphabet)//2:    #字母表长40
-            break
+        number=input('请选择要交换多少对字符（0-20）：')    #设置需要交换多少对字符，加入number这个中间变量来防止int()处理非数字或者空值时报错
+        if number.isdigit():    #判断是否是数字
+            plugs=int(number)
+            if 0 <= plugs <= len(alphabet)//2:    #判断数字是否在范围内，字母表长40
+                break
+            else:
+                print(invalid_value)
         else:
             print(invalid_value)
+            
     plugboard_sample=sample(alphabet, plugs*2)    #从字母表随机选出2倍plugs长度的字符，生成一个接线板的配置列表，前半部分作为front，后半部分作为back
 
     front=plugboard_sample[0:plugs]    #front列表
@@ -46,17 +51,15 @@ def set_plugboard():    #设置接线板
 def divert(text,plugboard_setting,is_coming_in):    #接线板交换字符功能，前两个参数是输入内容和接线板设定,第三个参数判断是第一次调用（数据往里）还是第二次调用（数据往外）
 
     diverted=list(text)    #列表化所输入的文本方便修改
-    if is_coming_in:    #如果是第一次调用
+    if is_coming_in:    #如果是第一次调用（往里走），正着来
         front=plugboard_setting[0]
         temp=plugboard_setting[1]
         back=plugboard_setting[2]
 
-    else:
+    else:    #如果不是第一次调用（往外走），反着来
         front=plugboard_setting[2]
         temp=plugboard_setting[1]
         back=plugboard_setting[0]
-    print(front)
-    print(back)
     
     for char in diverted:    #遍历输入的文本中的每一个字符
         i=diverted.index(char)
@@ -99,7 +102,6 @@ def set_rotors():    #设置转子
     print('【转子初始化完毕】\n'+    #打印出所有转子的配置
           '='*(len(alphabet)+3)+'\n'+
           '   '+alphabet+'\n'+
-          #''*(len(alphabet)+3)+'\n'+
           'R1:'+rt[0]+'\n'+
           'R2:'+rt[1]+'\n'+
           'R3:'+rt[2]+'\n'+
@@ -113,31 +115,42 @@ def set_rotors():    #设置转子
     print('='*(len(alphabet)+3))
     print('请选择转子（1-8）')
     invalid_entry='输入的值无效，请重新输入1-8的数字'
-    ##加入用正则表达式确保输入的是数字
-    ##这里输入空值会报错，因为int()不能转化空值或非数字的值
     while True:
-        i1=int(input('选择放入第一个插槽的转子：'))
-        if 1 <= i1 <= 8:
-            slot1=rt[i1-1]
-            break
+        i=input('选择放入第一个插槽的转子：')    #加入i这个中间变量来防止int()处理非数字或者空值时报错
+        if i.isdigit():    #判断是否是数字
+            i1=int(i)
+            if 1 <= i1 <= 8:    #判断数字是否在范围内
+                slot1=rt[i1-1]
+                break
+            else:
+                print(invalid_entry)
         else:
             print(invalid_entry)
 
     while True:
-        i2=int(input('选择放入第二个插槽的转子：'))
-        if 1 <= i2 <= 8 and i2 != i1:
-            slot2=rt[i2-1]
-            break
+        i=input('选择放入第二个插槽的转子：')
+        if i.isdigit():
+            i2=int(i)
+            if 1 <= i2 <= 8 and i2 != i1:
+                slot2=rt[i2-1]
+                break
+            else:
+                print(invalid_entry)
         else:
             print(invalid_entry)
             
     while True:
-        i3=int(input('选择放入第三个插槽的转子：'))
-        if 1 <= i3 <= 8 and i3 != i1 and i3 != i2:
-            slot3=rt[i3-1]
-            break
+        i=input('选择放入第三个插槽的转子：')
+        if i.isdigit():
+            i3=int(i)
+            if 1 <= i3 <= 8 and i3 != i1 and i3 != i2:
+                slot3=rt[i3-1]
+                break
+            else:
+                print(invalid_entry)
         else:
             print(invalid_entry)
+            
     print('\n'+'转子设置：')
     print('R'+str(i1)+':'+str(slot1)+'\n'+
           'R'+str(i2)+':'+str(slot2)+'\n'+
@@ -149,7 +162,6 @@ def scramble(text,rotors_setting,is_coming_in):    #转子加密功能，前两�
 
     scrambled=[]
     ein=zwei=drei=0    #三个转子的偏移量
-    print(is_coming_in)
     
     if is_coming_in:    #如果是第一次调用
         for char in text:    #用for来遍历text，一次加密一个
@@ -158,8 +170,6 @@ def scramble(text,rotors_setting,is_coming_in):    #转子加密功能，前两�
             exchange_2=rotors_setting[1][rotors_setting[0].index(exchange_1) - zwei]    #使用第2个转子加密
             
             exchange_3=rotors_setting[2][rotors_setting[1].index(exchange_2) - drei]    #使用第3个转子加密
-
-            print(ein,zwei,drei,exchange_3)
 
             ein+=1    #转子1偏移量+1
             if ein == len(alphabet):    #当转子1转到一圈时
@@ -180,9 +190,7 @@ def scramble(text,rotors_setting,is_coming_in):    #转子加密功能，前两�
             exchange_5=rotors_setting[0][rotors_setting[1].index(exchange_4) - (len(alphabet) - zwei)]
 
             exchange_6=alphabet[rotors_setting[0].index(exchange_5) - (len(alphabet) - ein)]
-
-            print(ein,zwei,drei,exchange_6)
-            
+           
             ein+=1    #转子1偏移量+1
             if ein == len(alphabet):    #当转子1转到一圈时
                 ein=0    #转子1偏移量归零
@@ -248,14 +256,8 @@ reflector_setting = set_reflector()    #设置反射器，调用reflector()方�
 input_text = keyboard()    #输入内容
 
 diverted_in = divert(input_text, plugboard_setting,1)    #调用diverte()方法，使字符进入接线板进行第一次交换
-#print('diverted_in:'+diverted_in)
 scrambled_in = scramble(diverted_in, rotors_setting,1)    #调用scramble()方法，使字符第一次进入转子进一步加密
-#print('scrambled_in:'+scrambled_in)
 reflected_text = reflect(scrambled_in, reflector_setting)    #调用reflect()功能，使字符进入反射器内部交换，并返回转子
-#print('reflected_text:'+reflected_text)
 scrambled_out=scramble(reflected_text,rotors_setting,0)    #再次调用scramble()方法，使字符第二次进入转子进一步加密
-#print('scrambled_in:'+scrambled_out)
 diverted_out=divert(scrambled_out,plugboard_setting,0)    #再次调用diverte()方法，使字符进入接线板进行第二次交换
-#print('diverted_out:'+diverted_out)
-output_text = lampboard(diverted_out)
-#print('output_text:'+output_text)
+output_text = lampboard(diverted_out)    #调用lampboard()方法，输出结果，其实这一步完全没必要，但是为了整个程序在结构上看起来像真的Enigma机于是就加上去了
