@@ -242,8 +242,16 @@ def reflect(scrambled_in,reflector_setting):    #反射器功能，把从转子�
             
 #==========Lampboard==========
 def lampboard(diverted_out):    #灯板部分（输出）
+    from tkinter import Tk
     output_text = '输出的内容为：'+diverted_out
     print(output_text)
+
+    clip = Tk()    #这一堆代码是调用tkinter来把程序输出的内容复制到剪贴板里
+    clip.withdraw()
+    clip.clipboard_clear()
+    clip.clipboard_append(diverted_out)
+    clip.destroy()
+    
     return output_text
 
 #==========Enigma==========
