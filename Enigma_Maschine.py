@@ -243,6 +243,8 @@ def reflect(scrambled_in,reflector_setting):    #反射器功能，把从转子�
 #==========Lampboard==========
 def lampboard(diverted_out):    #灯板部分（输出）
     from tkinter import Tk
+
+    print('='*(len(alphabet)+3))
     output_text = '输出的内容为：\n'+diverted_out
     print(output_text)
 
@@ -252,21 +254,41 @@ def lampboard(diverted_out):    #灯板部分（输出）
     clip.clipboard_append(diverted_out)
     clip.destroy()
     print('输出内容已复制到剪贴板')
+    print('='*(len(alphabet)+3)+'\n')
     
     return output_text
 
 #==========Enigma==========
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
+while True:
+    print('='*(len(alphabet)+3))
+    print('请选择操作：\n'+
+          '1. 设置恩尼格玛机\n'+
+          '2. 输入内容\n'+
+          '3. 退出程序')
+    print('='*(len(alphabet)+3))
+    command=input('请选择：')
+    
+    if command == '1':     
+        plugboard_setting = set_plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
+        rotors_setting = set_rotors()    #设置转子，调用rotors()方法，返回一个列表
+        reflector_setting = set_reflector()    #设置反射器，调用reflector()方法，返回一个列表
+        set_completed = 'yes'
+        
+    elif command == '2':
+        try:
+            set_completed == 'yes'
+        except NameError:    #捕捉异常，通过判断set_completed变量是否存在，判断程序是否已经设置完成
+            print('请先设置完成后再输入内容')
+        else:
+            input_text = keyboard()    #输入内容
 
-plugboard_setting = set_plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
-rotors_setting = set_rotors()    #设置转子，调用rotors()方法，返回一个列表
-reflector_setting = set_reflector()    #设置反射器，调用reflector()方法，返回一个列表
+            diverted_in = divert(input_text, plugboard_setting,1)    #调用diverte()方法，使字符进入接线板进行第一次交换
+            scrambled_in = scramble(diverted_in, rotors_setting,1)    #调用scramble()方法，使字符第一次进入转子进一步加密
+            reflected_text = reflect(scrambled_in, reflector_setting)    #调用reflect()功能，使字符进入反射器内部交换，并返回转子
+            scrambled_out=scramble(reflected_text,rotors_setting,0)    #再次调用scramble()方法，使字符第二次进入转子进一步加密
+            diverted_out=divert(scrambled_out,plugboard_setting,0)    #再次调用diverte()方法，使字符进入接线板进行第二次交换
+            output_text = lampboard(diverted_out)    #调用lampboard()方法，输出结果，其实这一步完全没必要，但是为了整个程序在结构上看起来像真的Enigma机于是就加上去了
 
-input_text = keyboard()    #输入内容
-
-diverted_in = divert(input_text, plugboard_setting,1)    #调用diverte()方法，使字符进入接线板进行第一次交换
-scrambled_in = scramble(diverted_in, rotors_setting,1)    #调用scramble()方法，使字符第一次进入转子进一步加密
-reflected_text = reflect(scrambled_in, reflector_setting)    #调用reflect()功能，使字符进入反射器内部交换，并返回转子
-scrambled_out=scramble(reflected_text,rotors_setting,0)    #再次调用scramble()方法，使字符第二次进入转子进一步加密
-diverted_out=divert(scrambled_out,plugboard_setting,0)    #再次调用diverte()方法，使字符进入接线板进行第二次交换
-output_text = lampboard(diverted_out)    #调用lampboard()方法，输出结果，其实这一步完全没必要，但是为了整个程序在结构上看起来像真的Enigma机于是就加上去了
+    elif command == '3':
+        break
