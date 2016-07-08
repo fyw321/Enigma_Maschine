@@ -249,16 +249,17 @@ def lampboard(diverted_out):    #灯板部分（输出）
     print(output_text)
 
     clip = Tk()    #这一堆代码是调用tkinter来把程序输出的内容复制到剪贴板里
-    clip.withdraw()
-    clip.clipboard_clear()
-    clip.clipboard_append(diverted_out)
-    clip.destroy()
+    clip.withdraw()    #隐藏Tk的窗口
+    clip.clipboard_clear()    #清理剪贴板
+    clip.clipboard_append(diverted_out)    #把输出结果添加到剪贴板
+    clip.destroy()    #关闭窗口
     print('输出内容已复制到剪贴板')
     print('='*(len(alphabet)+3)+'\n')
     
     return output_text
 
 #==========Enigma==========
+#To my beloved dear, CR.
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
    
 plugboard_setting = set_plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
