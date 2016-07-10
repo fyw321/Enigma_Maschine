@@ -251,22 +251,14 @@ def reflect():    #反射器功能，把从转子进来的字符转换为另一�
             
 #==========Lampboard==========
 def lampboard():    #灯板部分（输出）
-    from tkinter import Tk
+    import pyperclip    #调用第三方库pyperclip
 
     print('='*(len(alphabet)+3))
-    output_text = '输出的内容为：\n'+diverted_out
-    print(output_text)
-
-    clip = Tk()    #这一堆代码是调用tkinter来把程序输出的内容复制到剪贴板里
-    clip.withdraw()    #隐藏Tk的窗口
-    clip.clipboard_clear()    #清理剪贴板
-    clip.clipboard_append(diverted_out)    #把输出结果添加到剪贴板
-    clip.update()
-    clip.destroy()    #关闭窗口
-    print('输出内容已复制到剪贴板')
+    pyperclip.copy(diverted_out)    #把diverted_text复制到剪贴板
+    print('输出的内容为：\n'+pyperclip.paste())
     print('='*(len(alphabet)+3)+'\n')
     
-    return output_text
+    return diverted_out
         
 #==========Enigma==========
 #To my beloved dear, CR.
