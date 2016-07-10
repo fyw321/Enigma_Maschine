@@ -12,12 +12,21 @@ def keyboard():    #键盘部分（输入）
     print('='*(len(alphabet)+3)+'\n')
     return formatted_text
 
+#==========Seed==========
+def set_seed():    #统一设置随机数种子，就不需要设置三次了
+    phrase=input('输入一串足够长的字符当作随机数种子：\n')
+    l=len(phrase)
+    seed_setting = [phrase[0:l*1//3],
+                    phrase[l*1//3:l*2//3],
+                    phrase[l*2//3:l]]
+    return seed_setting
+
 #==========Plugboard==========
 def set_plugboard():    #设置接线板
     from random import seed,sample
 
     print('='*(len(alphabet)+3))
-    seed(input('请输入设置接线板的随机数种子：'))
+    seed(seed_setting[0])    #使用seed_setting中的第一段作为随机数种子
     invalid_value='输入的值无效，请重新输入0-20的数字'
 
     while True:
@@ -48,7 +57,7 @@ def set_plugboard():    #设置接线板
     
     return plugboard_setting
 
-def divert(text,plugboard_setting,is_coming_in):    #接线板交换字符功能，前两个参数是输入内容和接线板设定,第三个参数判断是第一次调用（数据往里）还是第二次调用（数据往外）
+def divert(text,is_coming_in):    #接线板交换字符功能，第一个参数是输入内容,第二个参数判断是第一次调用（数据往里）还是第二次调用（数据往外）
 
     diverted=list(text)    #列表化所输入的文本方便修改
     if is_coming_in:    #如果是第一次调用（往里走），正着来
@@ -93,7 +102,7 @@ def set_rotors():    #设置转子
     alphabet_list=list(alphabet)    #列表化
     rt=[]
     print('='*(len(alphabet)+3))
-    seed(input('请输入生成转子的随机数种子：'))    #加入伪随机数种子，使得每次生成的每个转子的替换是固定的
+    seed(seed_setting[1])    #使用seed_setting中的第二段作为随机数种子
     for i in range(0,8):    #生成8个转子
         shuffle(alphabet_list)    #随机洗牌
         rt.append("".join(alphabet_list))    #8个转子保存在列表里
@@ -158,7 +167,7 @@ def set_rotors():    #设置转子
     print('='*(len(alphabet)+3)+'\n')
     return slot1,slot2,slot3
           
-def scramble(text,rotors_setting,is_coming_in):    #转子加密功能，前两个参数是输入内容和转子设定,第三个参数判断是第一次调用（数据往里）还是第二次调用（数据往外）
+def scramble(text,is_coming_in):    #转子加密功能，第一个参数是输入内容，第二个参数判断是第一次调用（数据往里）还是第二次调用（数据往外）
 
     scrambled=[]
     ein=zwei=drei=0    #三个转子的偏移量
@@ -213,7 +222,7 @@ def set_reflector():    #设置反射器
     from random import seed,shuffle
 
     print('='*(len(alphabet)+3))
-    seed(input('请输入生成反射器的随机数种子：'))
+    seed(seed_setting[2])    #使用seed_setting中的第三段作为随机数种子
     alphabet_list=list(alphabet)
     shuffle(alphabet_list)
     front=alphabet_list[0:len(alphabet)//2]
@@ -228,7 +237,7 @@ def set_reflector():    #设置反射器
     
     return a,b
 
-def reflect(scrambled_in,reflector_setting):    #反射器功能，把从转子进来的字符转换为另一个字符再返回转子
+def reflect():    #反射器功能，把从转子进来的字符转换为另一个字符再返回转子
     a=reflector_setting[0]
     b=reflector_setting[1]
     reflected = []
@@ -241,7 +250,7 @@ def reflect(scrambled_in,reflector_setting):    #反射器功能，把从转子�
     return reflected_text
             
 #==========Lampboard==========
-def lampboard(diverted_out):    #灯板部分（输出）
+def lampboard():    #灯板部分（输出）
     from tkinter import Tk
 
     print('='*(len(alphabet)+3))
@@ -257,24 +266,26 @@ def lampboard(diverted_out):    #灯板部分（输出）
     print('='*(len(alphabet)+3)+'\n')
     
     return output_text
-
+        
 #==========Enigma==========
 #To my beloved dear, CR.
 print('==============Enigma Maschine==============')
 print('                 by fyw321')
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
-   
+
+seed_setting = set_seed()    #设置随机数种子，调用set_seed()方法，返回一个三段的列表
+
 plugboard_setting = set_plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
 rotors_setting = set_rotors()    #设置转子，调用rotors()方法，返回一个列表
 reflector_setting = set_reflector()    #设置反射器，调用reflector()方法，返回一个列表
 
 input_text = keyboard()    #输入内容
 
-diverted_in = divert(input_text, plugboard_setting,1)    #调用diverte()方法，使字符进入接线板进行第一次交换
-scrambled_in = scramble(diverted_in, rotors_setting,1)    #调用scramble()方法，使字符第一次进入转子进一步加密
-reflected_text = reflect(scrambled_in, reflector_setting)    #调用reflect()功能，使字符进入反射器内部交换，并返回转子
-scrambled_out=scramble(reflected_text,rotors_setting,0)    #再次调用scramble()方法，使字符第二次进入转子进一步加密
-diverted_out=divert(scrambled_out,plugboard_setting,0)    #再次调用diverte()方法，使字符进入接线板进行第二次交换
-output_text = lampboard(diverted_out)    #调用lampboard()方法，输出结果，其实这一步完全没必要，但是为了整个程序在结构上看起来像真的Enigma机于是就加上去了
+diverted_in = divert(input_text, 1)    #调用diverte()方法，使字符进入接线板进行第一次交换
+scrambled_in = scramble(diverted_in, 1)    #调用scramble()方法，使字符第一次进入转子进一步加密
+reflected_text = reflect()    #调用reflect()功能，使字符进入反射器内部交换，并返回转子
+scrambled_out=scramble(reflected_text, 0)    #再次调用scramble()方法，使字符第二次进入转子进一步加密
+diverted_out=divert(scrambled_out, 0)    #再次调用diverte()方法，使字符进入接线板进行第二次交换
+output_text = lampboard()    #调用lampboard()方法，输出结果，其实这一步完全没必要，但是为了整个程序在结构上看起来像真的Enigma机于是就加上去了
 
-print('done')
+input()
