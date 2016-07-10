@@ -260,6 +260,8 @@ def lampboard(diverted_out):    #灯板部分（输出）
 
 #==========Enigma==========
 #To my beloved dear, CR.
+print('==============Enigma Maschine==============')
+print('                 by fyw321')
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
    
 plugboard_setting = set_plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
@@ -274,3 +276,5 @@ reflected_text = reflect(scrambled_in, reflector_setting)    #调用reflect()功
 scrambled_out=scramble(reflected_text,rotors_setting,0)    #再次调用scramble()方法，使字符第二次进入转子进一步加密
 diverted_out=divert(scrambled_out,plugboard_setting,0)    #再次调用diverte()方法，使字符进入接线板进行第二次交换
 output_text = lampboard(diverted_out)    #调用lampboard()方法，输出结果，其实这一步完全没必要，但是为了整个程序在结构上看起来像真的Enigma机于是就加上去了
+
+print('done')
