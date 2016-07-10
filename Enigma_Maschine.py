@@ -261,6 +261,7 @@ def lampboard():    #灯板部分（输出）
     clip.withdraw()    #隐藏Tk的窗口
     clip.clipboard_clear()    #清理剪贴板
     clip.clipboard_append(diverted_out)    #把输出结果添加到剪贴板
+    clip.update()
     clip.destroy()    #关闭窗口
     print('输出内容已复制到剪贴板')
     print('='*(len(alphabet)+3)+'\n')
@@ -269,23 +270,25 @@ def lampboard():    #灯板部分（输出）
         
 #==========Enigma==========
 #To my beloved dear, CR.
+
 print('==============Enigma Maschine==============')
 print('                 by fyw321')
-alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
 
-seed_setting = set_seed()    #设置随机数种子，调用set_seed()方法，返回一个三段的列表
+while True:
+    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.?'   #标准字母表+数字+空格+少数标点
 
-plugboard_setting = set_plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
-rotors_setting = set_rotors()    #设置转子，调用rotors()方法，返回一个列表
-reflector_setting = set_reflector()    #设置反射器，调用reflector()方法，返回一个列表
+    seed_setting = set_seed()    #设置随机数种子，调用set_seed()方法，返回一个三段的列表
 
-input_text = keyboard()    #输入内容
+    plugboard_setting = set_plugboard()    #设置接线板，调用plugboard()方法，返回一个经过接线板初次替换字符顺序的文本
+    rotors_setting = set_rotors()    #设置转子，调用rotors()方法，返回一个列表
+    reflector_setting = set_reflector()    #设置反射器，调用reflector()方法，返回一个列表
 
-diverted_in = divert(input_text, 1)    #调用diverte()方法，使字符进入接线板进行第一次交换
-scrambled_in = scramble(diverted_in, 1)    #调用scramble()方法，使字符第一次进入转子进一步加密
-reflected_text = reflect()    #调用reflect()功能，使字符进入反射器内部交换，并返回转子
-scrambled_out=scramble(reflected_text, 0)    #再次调用scramble()方法，使字符第二次进入转子进一步加密
-diverted_out=divert(scrambled_out, 0)    #再次调用diverte()方法，使字符进入接线板进行第二次交换
-output_text = lampboard()    #调用lampboard()方法，输出结果，其实这一步完全没必要，但是为了整个程序在结构上看起来像真的Enigma机于是就加上去了
+    input_text = keyboard()    #输入内容
 
-input()
+    diverted_in = divert(input_text, 1)    #调用diverte()方法，使字符进入接线板进行第一次交换
+    scrambled_in = scramble(diverted_in, 1)    #调用scramble()方法，使字符第一次进入转子进一步加密
+    reflected_text = reflect()    #调用reflect()功能，使字符进入反射器内部交换，并返回转子
+    scrambled_out=scramble(reflected_text, 0)    #再次调用scramble()方法，使字符第二次进入转子进一步加密
+    diverted_out=divert(scrambled_out, 0)    #再次调用diverte()方法，使字符进入接线板进行第二次交换
+    output_text = lampboard()    #调用lampboard()方法，输出结果，其实这一步完全没必要，但是为了整个程序在结构上看起来像真的Enigma机于是就加上去了
+
