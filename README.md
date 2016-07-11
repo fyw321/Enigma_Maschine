@@ -14,4 +14,4 @@ I made this during my unemployment and boredness, and this is my very first actu
 
 But WTH, this thing works like a charm (to me).
 
-#The copy-to-clipboard part needs a pyperclip (https://github.com/asweigart/pyperclip) to work properly.
+The copy-to-clipboard part needs a pyperclip (https://github.com/asweigart/pyperclip) to work properly.
